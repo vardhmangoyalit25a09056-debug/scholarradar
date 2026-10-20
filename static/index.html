@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ScholarRadar</title>
+<style>
+:root{--bg:#f7f8fa;--fg:#14181f;--card:#fff;--mut:#5b6472;--ac:#0f766e;--bd:#dfe3e8}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1318;--fg:#e8ecf1;--card:#181e26;--mut:#9aa5b3;--ac:#2dd4bf;--bd:#2a3440}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px}
+h1{margin:0 0 4px}p.sub{color:var(--mut);margin:0 0 20px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;background:var(--card);border:1px solid var(--bd);padding:16px;border-radius:12px}
+label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+input,select{padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
+button{grid-column:1/-1;padding:10px;border:0;border-radius:8px;background:var(--ac);color:#fff;font-weight:600;cursor:pointer}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-top:12px}
+.row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--bd);color:var(--mut)}
+.urgent{color:#dc2626;border-color:#dc2626}
+#stats{margin-top:16px;font-size:13px;color:var(--mut)}a{color:var(--ac)}
+</style></head><body><main>
+<h1>ScholarRadar</h1>
+<p class="sub">Tell us about yourself. Agents check official portals; you see only what you qualify for, soonest deadline first.</p>
+<form id="f">
+<label>State<input name="state" placeholder="Punjab"></label>
+<label>Category<select name="category"><option value="">-</option><option>General</option><option>OBC</option><option>SC</option><option>ST</option><option>EWS</option></select></label>
+<label>Course<input name="course" placeholder="B.Tech"></label>
+<label>Family income (INR/yr)<input name="annual_income" type="number" min="0"></label>
+<label>Last exam %<input name="percentage" type="number" step="0.1" min="0" max="100"></label>
+<label>Gender<select name="gender"><option value="">-</option><option>female</option><option>male</option></select></label>
+<button>Find my scholarships</button></form>
+<div id="out"></div><div id="stats"></div>
+<script>
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+f.onsubmit=async e=>{e.preventDefault();out.textContent="Searching official portals...";
+const d=Object.fromEntries(new FormData(f));
+d.annual_income=d.annual_income?+d.annual_income:null;d.percentage=d.percentage?+d.percentage:null;
+const r=await fetch("/api/match",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});
+const j=await r.json();
+out.innerHTML=j.matches.length?j.matches.map(m=>`<div class="card"><div class="row"><b>${esc(m.name)}</b>
+<span class="tag ${m.days_left!=null&&m.days_left<=14?"urgent":""}">${m.days_left==null?"deadline unknown":m.days_left+" days left"}</span></div>
+<div>${esc(m.provider)} &middot; ${esc(m.amount)}</div>
+${m.to_verify.length?`<div class="tag">Confirm: ${esc(m.to_verify.join(", "))}</div>`:""}
+<a href="${esc(m.apply_url)}" target="_blank" rel="noopener">Official page</a></div>`).join(""):"<p>No matches yet.</p>";
+stats.textContent=Object.entries(j.stats).map(([k,v])=>k+": "+v).join(" | ");};
+</script></main></body></html>

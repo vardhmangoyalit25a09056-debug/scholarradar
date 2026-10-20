@@ -1,0 +1,14 @@
+[
+  {"name": "SAMPLE Merit Scholarship (fictional)", "provider": "Sample Ministry", "amount": "INR 50,000 / year",
+   "deadline": "2026-12-31", "apply_url": "https://example.gov.in/sample-merit",
+   "eligibility": {"states": ["all"], "categories": ["all"], "courses": ["b.tech", "b.e.", "bsc"], "max_income": 800000, "min_percentage": 60, "gender": "all"}},
+  {"name": "SAMPLE Girls in STEM Grant (fictional)", "provider": "Sample Foundation", "amount": "INR 30,000 one-time",
+   "deadline": "2026-11-15", "apply_url": "https://example.gov.in/sample-stem",
+   "eligibility": {"states": ["all"], "categories": ["all"], "courses": ["b.tech", "bsc"], "max_income": null, "min_percentage": 55, "gender": "female"}},
+  {"name": "SAMPLE State Post-Matric Scheme (fictional)", "provider": "Sample State Govt", "amount": "Full tuition",
+   "deadline": "2026-11-30", "apply_url": "https://example.gov.in/sample-state",
+   "eligibility": {"states": ["punjab"], "categories": ["sc", "obc"], "courses": ["all"], "max_income": 250000, "min_percentage": null, "gender": "all"}},
+  {"name": "SAMPLE Expired Fellowship (fictional)", "provider": "Sample Trust", "amount": "INR 1,00,000",
+   "deadline": "2026-01-10", "apply_url": "https://example.gov.in/sample-expired",
+   "eligibility": {"states": ["all"], "categories": ["all"], "courses": ["all"], "max_income": null, "min_percentage": null, "gender": "all"}}
+]

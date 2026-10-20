@@ -54,17 +54,45 @@ def search(query: str) -> list[dict]:
     return out
 
 
+
 def fetch(urls: list[str]) -> dict[str, str]:
-    """FREE. Returns {url: markdown_text}. Failed URLs are simply absent."""
-    r = requests.post(FETCH_URL, json={"urls": urls}, headers=_headers(), timeout=TIMEOUT)
+    """FREE. Returns {requested_url: page_text}."""
+    r = requests.post(
+        FETCH_URL,
+        json={"urls": urls},
+        headers=_headers(),
+        timeout=TIMEOUT,
+    )
     r.raise_for_status()
+    payload = r.json()
+
     out = {}
-    for item in _first_list(r.json()):
-        url = item.get("url")
-        text = item.get("markdown") or item.get("content") or item.get("text") or ""
-        if url and text:
-            out[url] = text
+    items = _first_list(payload)
+
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+
+        text = (
+            item.get("markdown")
+            or item.get("content")
+            or item.get("text")
+            or ""
+        )
+        if not text:
+            continue
+
+        returned_urls = [
+            item.get("url"),
+            item.get("final_url"),
+        ]
+
+        for requested_url in urls:
+            if requested_url in returned_urls:
+                out[requested_url] = text
+
     return out
+
 
 
 def agent_run(url: str, goal: str) -> dict | None:
